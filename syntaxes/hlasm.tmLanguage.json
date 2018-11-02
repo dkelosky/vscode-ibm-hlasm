@@ -1,0 +1,72 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "IBM HLASM",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"_description": "The pattern order is important.",
+			"patterns": [
+				{
+					"_description": "'*PROCESS' that begins in column 1 and anything that follows",
+					"name": "keyword.other.hlasm",
+					"match": "^\\*PROCESS\\s+.*$"
+				},
+				{
+					"_description": "All statements that have a * in column 1",
+					"name": "comment.line.double-slash.hlasm",
+					"match": "(^|\\n)\\*.*"
+				},
+				{
+					"_description": "Continuation character that appears in column 72",
+					"match": "(^|\\n).{71,71}(.)",
+					"captures": {
+						"2": {
+							"name": "keyword.other.hlasm"
+						}
+					}
+				},
+				{
+					"_description": "Reserved words",
+					"match": "\\b(DROP|USING|TITLE|EJECT|SYSSTATE|END|CSECT|RSECT|AMODE|RMODE)\\b",
+					"name": "keyword.operator.hlasm"
+				},
+				{
+					"_description": "Comments that appear after a label (optional) and instruction and operands",
+					"match": "(^|\\n)([^*]\\S*|\\s*)(\\s+(\\S+)\\s+(\\S+))(.*)",
+					"captures": {
+						"4": {
+							"name": "keyword.other.hlasm"
+						},
+						"5": {
+							"name": "keyword.control.hlasm"
+						},
+						"6": {
+							"name": "comment.line.double-slash.hlasm"
+						}
+					}
+				}
+			]
+		},
+		"strings": {
+			"_description": "",
+			"patterns": [
+				{
+					"match": "(^|\\n).*('.*')",
+					"captures": {
+						"2": {
+							"name": "string.quoted.single.hlasm"
+						}
+					}
+				}
+			]
+		}
+	},
+	"scopeName": "source.hlasm"
+}
