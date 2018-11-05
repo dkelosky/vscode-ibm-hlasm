@@ -3,7 +3,7 @@
     "displayName": "ibm-assembler",
     "description": "IBM Assembler Language Highlighter",
     "repository": "https://github.com/dkelosky/vscode-ibm-hlasm",
-    "version": "0.0.2",
+    "version": "0.1.0",
     "publisher": "kelosky",
     "icon": "docs/images/icon.png",
     "engines": {
@@ -13,16 +13,29 @@
         "Programming Languages"
     ],
     "contributes": {
-        "languages": [{
-            "id": "hlasm",
-            "aliases": ["IBM HLASM", "hlasm"],
-            "extensions": [".hlasm",".asm",".asmpgm",".mac",".asmmac"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "hlasm",
-            "scopeName": "source.hlasm",
-            "path": "./syntaxes/hlasm.tmLanguage.json"
-        }]
+        "languages": [
+            {
+                "id": "hlasm",
+                "aliases": [
+                    "IBM HLASM",
+                    "hlasm"
+                ],
+                "extensions": [
+                    ".hlasm",
+                    ".asm",
+                    ".asmpgm",
+                    ".mac",
+                    ".asmmac"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "hlasm",
+                "scopeName": "source.hlasm",
+                "path": "./syntaxes/hlasm.tmLanguage.json"
+            }
+        ]
     }
 }
