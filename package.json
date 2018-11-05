@@ -5,6 +5,7 @@
     "repository": "https://github.com/dkelosky/vscode-ibm-hlasm",
     "version": "0.0.2",
     "publisher": "kelosky",
+    "icon": "docs/images/icon.png",
     "engines": {
         "vscode": "^1.28.0"
     },
