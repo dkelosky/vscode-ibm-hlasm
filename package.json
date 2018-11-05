@@ -3,8 +3,8 @@
     "displayName": "ibm-assembler",
     "description": "IBM Assembler Language Highlighter",
     "repository": "https://github.com/dkelosky/vscode-ibm-hlasm",
-    "version": "0.0.1",
-    "publisher": "dkelosky",
+    "version": "0.0.2",
+    "publisher": "kelosky",
     "engines": {
         "vscode": "^1.28.0"
     },
