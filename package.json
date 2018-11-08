@@ -30,6 +30,7 @@
                 "extensions": [
                     ".hlasm",
                     ".asm",
+                    ".s",
                     ".asmpgm",
                     ".mac",
                     ".asmmac"
