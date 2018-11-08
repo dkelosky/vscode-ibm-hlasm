@@ -4,6 +4,13 @@
     "description": "IBM Assembler Language Highlighter",
     "repository": "https://github.com/dkelosky/vscode-ibm-hlasm",
     "version": "0.1.0",
+    "keywords": [
+        "z/OS",
+        "s390",
+        "mvs,
+        "ASMA90",
+        "assembly"
+    ],
     "publisher": "kelosky",
     "icon": "docs/images/icon.png",
     "engines": {
