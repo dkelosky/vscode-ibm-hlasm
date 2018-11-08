@@ -3,7 +3,7 @@
     "displayName": "ibm-assembler",
     "description": "IBM Assembler Language Highlighter",
     "repository": "https://github.com/dkelosky/vscode-ibm-hlasm",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "keywords": [
         "z/OS",
         "s390",
