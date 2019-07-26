@@ -175,7 +175,7 @@
 		},
 		"numbers": {
 			"_description": "marks numbers properly",
-			"match": "(?<=[=(),*\\s])-?\\d*(?=[=(),*\\s])",
+			"match": "(?<=[=(),*\\s])-?\\d*(?=[=(),*\\s]|$)",
 			"name": "constant.numeric.hlasm"
 		}
 	},
