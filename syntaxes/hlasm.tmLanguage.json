@@ -126,8 +126,15 @@
 							"_description": "This group refers to an instruction operator",
 							"name": "keyword.control.hlasm",
 							"patterns": [
-								{"include": "#operators"},
-								{"include": "#numbers"}
+								{
+									"include": "#asmSpecialStatements"
+								},
+								{
+									"include": "#operators"
+								},
+								{
+									"include": "#numbers"
+								}
 							]
 						},
 						"2": {
@@ -150,9 +157,15 @@
 							"_description": "This group refers to an instruction operator",
 							"name": "keyword.control.hlasm",
 							"patterns": [
-								{"include": "#operators"},
-								{"include": "#numbers"}
-								
+								{
+									"include": "#asmSpecialStatements"
+								},
+								{
+									"include": "#operators"
+								},
+								{
+									"include": "#numbers"
+								}
 							]
 						},
 						"2": {
@@ -177,6 +190,11 @@
 			"_description": "marks numbers properly",
 			"match": "(?<=[=(),*\\s])-?\\d*(?=[=(),*\\s]|$)",
 			"name": "constant.numeric.hlasm"
+		},
+		"asmSpecialStatements": {
+			"_description": "allows for special assembler statements",
+			"match": "(?<=[=(),*\\s])=?\\d*(A|B|C|D|E|F|G|H|V|X|Z)(L\\d*)?(?=[=(),*\\s]|$)",
+			"name": "support.type.hlasm"
 		}
 	},
 	"scopeName": "source.hlasm"
