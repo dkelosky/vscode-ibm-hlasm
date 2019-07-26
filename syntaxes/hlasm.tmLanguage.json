@@ -2,68 +2,136 @@
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "IBM HLASM",
 	"patterns": [
-		{
-			"include": "#keywords"
-		},
-		{
-			"include": "#strings"
-		}
+		{"include": "#hlasm_syntax"}
 	],
 	"repository": {
-		"keywords": {
-			"_description": "The pattern order is important.",
+		"hlasm_syntax": {
+				"patterns": [
+					{
+						"include": "#lineComment"
+					},
+					{
+						"include": "#continuation"
+					},
+					{
+						"include": "#asmLine"
+					}
+				]
+		},
+		"lineComment": {
+			"_description": "All statements that have a * in column 1",
 			"patterns": [
 				{
-					"_description": "'*PROCESS' that begins in column 1 and anything that follows",
-					"name": "keyword.other.hlasm",
-					"match": "^\\*PROCESS\\s+.*$"
-				},
-				{
-					"_description": "All statements that have a * in column 1",
 					"name": "comment.line.double-slash.hlasm",
-					"match": "(^|\\n)\\*.*"
-				},
+					"match": "^\\*.*$"
+				}
+			]
+		},
+		"continuation": {
+			"_description": "Continuation character that appears in column 72",
+			"patterns": [
 				{
-					"_description": "Continuation character that appears in column 72",
-					"match": "(^|\\n).{71,71}(.)",
+					"match": "^(.{71,71})(.)$",
 					"captures": {
+						"1": {
+							"_description": "Allow syntax hilighting of the rest of the line",
+							"patterns": [
+								{"include": "#asmLine"}
+							]
+						},
 						"2": {
 							"name": "keyword.other.hlasm"
-						}
-					}
-				},
-				{
-					"_description": "Reserved words",
-					"match": "\\b(DROP|USING|TITLE|EJECT|SYSSTATE|END|CSECT|RSECT|AMODE|RMODE)\\b",
-					"name": "keyword.operator.hlasm"
-				},
-				{
-					"_description": "Comments that appear after a label (optional) and instruction and operands",
-					"match": "(^|\\n)([^*]\\S*|\\s*)(\\s+(\\S+)\\s+(\\S+))(.*)",
-					"captures": {
-						"4": {
-							"name": "keyword.other.hlasm"
-						},
-						"5": {
-							"name": "keyword.control.hlasm"
-						},
-						"6": {
-							"name": "comment.line.double-slash.hlasm"
 						}
 					}
 				}
 			]
 		},
-		"strings": {
-			"_description": "",
+		"asmLine": {
+			"_description": "The various parts of an assembler line",
 			"patterns": [
 				{
-					"match": "(^|\\n).*('.*')",
+					"match": "^([^*]\\S*)?\\s+(.*)$",
 					"captures": {
+						"1": {
+							"_description": "The label for a line.",
+							"name": "entity.name.function.hlasm"
+						},
 						"2": {
-							"name": "string.quoted.single.hlasm"
+							"_description": "The assembler instructions for this statement",
+							"patterns": [
+								{"include": "#asmStatement"}
+							]
 						}
 					}
+				}
+			]
+		},
+		"asmStatement": {
+			"_description": "An assembler source code statement",
+			"patterns": [
+				{
+					"include": "#asmInstruction"
+				}
+			]
+		},
+		"asmInstruction": {
+			"_description": "A simple assembler source statement with 3 things. An instruction, parameters, and comment",
+			"patterns": [
+				{
+					"match": "(\\S+)\\s+(.*)",
+					"captures": {
+						"1": {
+							"name": "keyword.other.hlasm"
+						},
+						"2": {
+							"patterns": [
+								{"include": "#asmInstructionArguments"}
+							]
+						}
+					}
+				}
+			]
+		},
+		"asmInstructionArguments": {
+			"patterns": [
+				{
+					"_description": "Handle strings in an instruction",
+					"match": "(\\S*)('.*')(.*)",
+					"captures": {
+						"1": {
+							"_description": "This group refers to an instruction operator",
+							"name": "keyword.control.hlasm"
+						},
+						"2": {
+							"_description": "A string was found, so we can't be sure this is the end of the line",
+							"name": "string.quoted.single.hlasm"
+						},
+						"3": {
+							"_description": "Recursively call this rule to get all patterns.",
+							"patterns": [
+								{"include": "#asmInstructionArguments"}
+							]
+						}
+					}
+				},
+				{
+					"_description": "Handle no strings in instruction",
+					"match": "(\\S*)(.*)",
+					"captures": {
+						"1": {
+							"_description": "This group refers to an instruction operator",
+							"name": "keyword.control.hlasm"
+						},
+						"2": {
+							"_description": "The rest of the line is a comment.",
+							"name": "comment.line.double-slash.hlasm"
+						}
+					}
+				},
+				{
+					"_description": "If the current pattern starts with a space, then we should comment the rest of the string",
+					"match": "\\s.*",
+					"name": "comment.line.double-slash"
 				}
 			]
 		}
