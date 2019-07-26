@@ -17,7 +17,7 @@
 						"include": "#continuation"
 					},
 					{
-						"include": "#asmLine"
+						"include": "#asmLineStart"
 					}
 				]
 		},
@@ -48,7 +48,7 @@
 						"1": {
 							"_description": "Allow syntax hilighting of the rest of the line",
 							"patterns": [
-								{"include": "#asmLine"}
+								{"include": "#asmLineStart"}
 							]
 						},
 						"2": {
@@ -58,7 +58,7 @@
 				}
 			]
 		},
-		"asmLine": {
+		"asmLineStart": {
 			"_description": "The various parts of an assembler line",
 			"patterns": [
 				{
@@ -71,18 +71,10 @@
 						"2": {
 							"_description": "The assembler instructions for this statement",
 							"patterns": [
-								{"include": "#asmStatement"}
+								{"include": "#asmInstruction"}
 							]
 						}
 					}
-				}
-			]
-		},
-		"asmStatement": {
-			"_description": "An assembler source code statement",
-			"patterns": [
-				{
-					"include": "#asmInstruction"
 				}
 			]
 		},
@@ -90,21 +82,21 @@
 			"_description": "A simple assembler source statement with 3 things. An instruction, parameters, and comment",
 			"patterns": [
 				{
-					"match": "(\\S+)\\s+(.*)",
+					"match": "(\\S+)\\s*(.*)",
 					"captures": {
 						"1": {
 							"name": "keyword.other.hlasm"
 						},
 						"2": {
 							"patterns": [
-								{"include": "#asmInstructionArguments"}
+								{"include": "#asmArguments"}
 							]
 						}
 					}
 				}
 			]
 		},
-		"asmInstructionArguments": {
+		"asmArguments": {
 			"patterns": [
 				{
 					"_description": "Handle strings in an instruction",
@@ -121,7 +113,7 @@
 						"3": {
 							"_description": "Recursively call this rule to get all patterns.",
 							"patterns": [
-								{"include": "#asmInstructionArguments"}
+								{"include": "#asmArguments"}
 							]
 						}
 					}
