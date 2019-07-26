@@ -8,6 +8,9 @@
 		"hlasm_syntax": {
 				"patterns": [
 					{
+						"include": "#lineTooLong"
+					},
+					{
 						"include": "#lineComment"
 					},
 					{
@@ -17,6 +20,15 @@
 						"include": "#asmLine"
 					}
 				]
+		},
+		"lineTooLong": {
+			"_description": "Assembler lines should only be 72 chars, at 73 the entire line should be in error",
+			"patterns": [
+				{
+					"name": "invalid.illegal.hlasm",
+					"match": "^.{73,}"  
+				}
+			]
 		},
 		"lineComment": {
 			"_description": "All statements that have a * in column 1",
