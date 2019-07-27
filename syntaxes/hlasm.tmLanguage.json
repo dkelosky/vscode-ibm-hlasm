@@ -2,70 +2,199 @@
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "IBM HLASM",
 	"patterns": [
-		{
-			"include": "#keywords"
-		},
-		{
-			"include": "#strings"
-		}
+		{"include": "#hlasm_syntax"}
 	],
 	"repository": {
-		"keywords": {
-			"_description": "The pattern order is important.",
+		"hlasm_syntax": {
+				"patterns": [
+					{
+						"include": "#lineTooLong"
+					},
+					{
+						"include": "#lineComment"
+					},
+					{
+						"include": "#continuation"
+					},
+					{
+						"include": "#asmArgumentLine"
+					},
+					{
+						"include": "#asmLineStart"
+					}
+				]
+		},
+		"lineTooLong": {
+			"_description": "Assembler lines should only be 72 chars, at 73 the entire line should be in error",
 			"patterns": [
 				{
-					"_description": "'*PROCESS' that begins in column 1 and anything that follows",
-					"name": "keyword.other.hlasm",
-					"match": "^\\*PROCESS\\s+.*$"
-				},
+					"name": "invalid.illegal.hlasm",
+					"match": "^.{73,}"  
+				}
+			]
+		},
+		"lineComment": {
+			"_description": "All statements that have a * in column 1",
+			"patterns": [
 				{
-					"_description": "All statements that have a * in column 1",
 					"name": "comment.line.double-slash.hlasm",
-					"match": "(^|\\n)\\*.*"
-				},
+					"match": "^\\*.*$"
+				}
+			]
+		},
+		"continuation": {
+			"_description": "Continuation character that appears in column 72",
+			"patterns": [
 				{
-					"_description": "Continuation character that appears in column 72",
-					"match": "(^|\\n).{71,71}(.)",
+					"match": "^(.{71,71})(.)$",
 					"captures": {
+						"1": {
+							"_description": "Allow syntax hilighting of the rest of the line",
+							"patterns": [
+								{"include": "#asmArgumentLine"},
+								{"include": "#asmLineStart"}
+							]
+						},
 						"2": {
 							"name": "keyword.other.hlasm"
 						}
 					}
-				},
+				}
+			]
+		},
+		"asmLineStart": {
+			"_description": "The various parts of an assembler line",
+			"patterns": [
 				{
-					"_description": "Reserved words",
-					"match": "\\b(DROP|USING|TITLE|EJECT|SYSSTATE|END|CSECT|RSECT|AMODE|RMODE)\\b",
-					"name": "keyword.operator.hlasm"
-				},
-				{
-					"_description": "Comments that appear after a label (optional) and instruction and operands",
-					"match": "(^|\\n)([^*]\\S*|\\s*)(\\s+(\\S+)\\s+(\\S+))(.*)",
+					"match": "^([^*]\\S*)?\\s+(.*)$",
 					"captures": {
-						"4": {
+						"1": {
+							"_description": "The label for a line.",
+							"name": "entity.name.function.hlasm"
+						},
+						"2": {
+							"_description": "The assembler instructions for this statement",
+							"patterns": [
+								{"include": "#asmInstruction"}
+							]
+						}
+					}
+				}
+			]
+		},
+		"asmInstruction": {
+			"_description": "A simple assembler source statement with 3 things. An instruction, parameters, and comment",
+			"patterns": [
+				{
+					"match": "(\\S+)\\s*(.*)",
+					"captures": {
+						"1": {
 							"name": "keyword.other.hlasm"
 						},
-						"5": {
-							"name": "keyword.control.hlasm"
+						"2": {
+							"patterns": [
+								{"include": "#asmArguments"}
+							]
+						}
+					}
+				}
+			]
+		},
+		"asmArgumentLine": {
+			"_description": "This is for a line consisting of only an argument. This implies the previous line was a continuation",
+			"patterns": [
+				{
+					"_description": "A line matching this syntax should follow the argument syntax",
+					"match": "^\\s+(\\S+=.*)$",
+					"captures": {
+						"1": {
+							"patterns": [
+								{"include": "#asmArguments"}
+							]
+						}
+					}
+				}
+			]
+		},
+		"asmArguments": {
+			"patterns": [
+				{
+					"_description": "Handle strings in an instruction",
+					"match": "(\\S*)('.*')(.*)",
+					"captures": {
+						"1": {
+							"_description": "This group refers to an instruction operator",
+							"name": "keyword.control.hlasm",
+							"patterns": [
+								{
+									"include": "#asmSpecialStatements"
+								},
+								{
+									"include": "#operators"
+								},
+								{
+									"include": "#numbers"
+								}
+							]
 						},
-						"6": {
+						"2": {
+							"_description": "A string was found, so we can't be sure this is the end of the line",
+							"name": "string.quoted.single.hlasm"
+						},
+						"3": {
+							"_description": "Recursively call this rule to get all patterns.",
+							"patterns": [
+								{"include": "#asmArguments"}
+							]
+						}
+					}
+				},
+				{
+					"_description": "Handle no strings in instruction",
+					"match": "(\\S*)(.*)",
+					"captures": {
+						"1": {
+							"_description": "This group refers to an instruction operator",
+							"name": "keyword.control.hlasm",
+							"patterns": [
+								{
+									"include": "#asmSpecialStatements"
+								},
+								{
+									"include": "#operators"
+								},
+								{
+									"include": "#numbers"
+								}
+							]
+						},
+						"2": {
+							"_description": "The rest of the line is a comment.",
 							"name": "comment.line.double-slash.hlasm"
 						}
 					}
+				},
+				{
+					"_description": "If the current pattern starts with a space, then we should comment the rest of the string",
+					"match": "\\s.*",
+					"name": "comment.line.double-slash.hlasm"
 				}
 			]
 		},
-		"strings": {
-			"_description": "",
-			"patterns": [
-				{
-					"match": "(^|\\n).*('.*')",
-					"captures": {
-						"2": {
-							"name": "string.quoted.single.hlasm"
-						}
-					}
-				}
-			]
+		"operators": {
+			"_description": "marks operators properly",
+			"match": "[=(),*]",
+			"name": "keyword.operator.hlasm"
+		},
+		"numbers": {
+			"_description": "marks numbers properly",
+			"match": "(?<=[=(),*\\s])-?\\d*(?=[=(),*\\s]|$)",
+			"name": "constant.numeric.hlasm"
+		},
+		"asmSpecialStatements": {
+			"_description": "allows for special assembler statements",
+			"match": "(?<=[=(),*\\s])=?\\d*(A|B|C|D|E|F|G|H|V|X|Z)(L\\d*)?(?=[=(),*\\s]|$)",
+			"name": "support.type.hlasm"
 		}
 	},
 	"scopeName": "source.hlasm"
