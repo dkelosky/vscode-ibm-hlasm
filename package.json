@@ -8,6 +8,10 @@
         "z/OS",
         "s390",
         "mvs",
+        "assembler",
+        "mainframe",
+        "s390x",
+        "HLASM",
         "ASMA90",
         "assembly"
     ],
