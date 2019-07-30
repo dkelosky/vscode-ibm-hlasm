@@ -22,7 +22,7 @@
 			"_description": "Continuation character that appears in column 72",
 			"patterns": [
 				{
-					"match": "^(.{71,71})(.)(.*)$",
+					"match": "^(.{71,71})(.)(.{8})(.*)$",
 					"captures": {
 						"1": {
 							"_description": "Allow syntax hilighting of the rest of the line",
@@ -43,7 +43,7 @@
 						"3": {
 							"patterns": [
 								{
-									"match": "(\\d+)",
+									"match": "(\\d{8})",
 									"name": "markup.list.numbered.hlasm"
 								},
 								{
@@ -51,7 +51,16 @@
 									"name": "markup.list.unnumbered.hlasm"
 								}
 							]
+						},
+						"4": {
+							"patterns": [
+								{
+									"match": "(\\S+)",
+									"name": "invalid.illegal.hlasm"
+								}
+							]
 						}
+
 					}
 				}
 			]
