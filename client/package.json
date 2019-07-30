@@ -1,0 +1,25 @@
+{
+    "name": "ibm-assembler-client",
+    "description": "VSCode part of a language server",
+    "author": "kelosky",
+    "license": "MIT",
+    "version": "0.0.1",
+    "publisher": "vscode",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dkelosky/vscode-ibm-hlasm"
+    },
+    "engines": {
+        "vscode": "^1.28.0"
+    },
+    "scripts": {
+        "update-vscode": "vscode-install",
+        "postinstall": "vscode-install"
+    },
+    "dependencies": {
+        "vscode-languageclient": "^4.1.4"
+    },
+    "devDependencies": {
+        "vscode": "^1.1.35"
+    }
+}
