@@ -55,7 +55,7 @@
 						"4": {
 							"patterns": [
 								{
-									"match": "(\\S+)",
+									"match": "(.*)",
 									"name": "invalid.illegal.hlasm"
 								}
 							]
@@ -116,13 +116,15 @@
 			"_description": "This is for a line consisting of only an argument. This implies the previous line was a continuation",
 			"patterns": [
 				{
-					"_description": "A line matching this syntax should follow the argument syntax",
-					"match": "^\\s+(\\S+=.*)$",
+					"match": "^\\s{15}(\\S+)(\\s.*)$",
 					"captures": {
 						"1": {
 							"patterns": [
 								{"include": "#asmArguments"}
 							]
+						},
+						"2": {
+							"name": "comment.line.double-slash.hlasm"
 						}
 					}
 				}
