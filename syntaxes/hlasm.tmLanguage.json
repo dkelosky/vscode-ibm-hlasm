@@ -8,6 +8,9 @@
 		"hlasm_syntax": {
 				"patterns": [
 					{
+						"include": "#lineTooLong"
+					},
+					{
 						"include": "#continuation"
 					},
 					{
@@ -17,6 +20,15 @@
 						"include": "#asmLineStart"
 					}
 				]
+		},
+		"lineTooLong": {
+			"_description": "Assembler lines should only be 80 chars, at 81 the entire line should be in error",
+			"patterns": [
+				{
+					"name": "invalid.illegal.hlasm",
+					"match": "^.{81,}"  
+				}
+			]
 		},
 		"continuation": {
 			"_description": "Continuation character that appears in column 72",
