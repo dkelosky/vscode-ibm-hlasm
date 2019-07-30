@@ -5,8 +5,8 @@
 
 import {
     createConnection,
-    TextDocuments,
     TextDocument,
+    TextDocuments,
     Diagnostic,
     DiagnosticSeverity,
     ProposedFeatures,
@@ -14,16 +14,19 @@ import {
     DidChangeConfigurationNotification,
     CompletionItem,
     CompletionItemKind,
-    TextDocumentPositionParams
-} from 'vscode-languageserver';
+    TextDocumentPositionParams,
+    DocumentSymbol,
+    DocumentSymbolParams,
+    SymbolKind
+} from "vscode-languageserver";
 
-// Create a connection for the server. The connection uses Node's IPC as a transport.
+// Create a connection for the server. The connection uses Node"s IPC as a transport.
 // Also include all preview / proposed LSP features.
-let connection = createConnection(ProposedFeatures.all);
+const connection = createConnection(ProposedFeatures.all);
 
 // Create a simple text document manager. The text document manager
 // supports full document sync only
-let documents: TextDocuments = new TextDocuments();
+const documents: TextDocuments = new TextDocuments();
 
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
@@ -50,9 +53,13 @@ connection.onInitialize((params: InitializeParams) => {
         capabilities: {
             textDocumentSync: documents.syncKind,
             // Tell the client that the server supports code completion
-            completionProvider: {
-                resolveProvider: true
-            }
+            // completionProvider: true,
+                // resolveProvider: true
+            // },
+            // hoverProvider: true
+            // hoverProvider: true
+
+            documentSymbolProvider: true,
         }
     };
 });
@@ -64,7 +71,7 @@ connection.onInitialized(() => {
     }
     if (hasWorkspaceFolderCapability) {
         connection.workspace.onDidChangeWorkspaceFolders(_event => {
-            connection.console.log('Workspace folder change event received.');
+            connection.console.log("Workspace folder change event received.");
         });
     }
 });
@@ -105,7 +112,7 @@ function getDocumentSettings(resource: string): Thenable<ExampleSettings> {
     if (!result) {
         result = connection.workspace.getConfiguration({
             scopeUri: resource,
-            section: 'languageServerExample'
+            section: "languageServerExample"
         });
         documentSettings.set(resource, result);
     }
@@ -143,7 +150,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
                 end: textDocument.positionAt(m.index + m[0].length)
             },
             message: `${m[0]} is all uppercase.`,
-            source: 'ex'
+            source: "ex"
         };
         if (hasDiagnosticRelatedInformationCapability) {
             diagnostic.relatedInformation = [
@@ -152,14 +159,14 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
                         uri: textDocument.uri,
                         range: Object.assign({}, diagnostic.range)
                     },
-                    message: 'Spelling matters'
+                    message: "Spelling matters"
                 },
                 {
                     location: {
                         uri: textDocument.uri,
                         range: Object.assign({}, diagnostic.range)
                     },
-                    message: 'Particularly for names'
+                    message: "Particularly for names"
                 }
             ];
         }
@@ -172,64 +179,46 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 
 connection.onDidChangeWatchedFiles(_change => {
     // Monitored files have change in VSCode
-    connection.console.log('We received an file change event');
+    connection.console.log("We received an file change event");
 });
 
-// This handler provides the initial list of the completion items.
-connection.onCompletion(
-    (_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
-        // The pass parameter contains the position of the text document in
-        // which code complete got requested. For the example we ignore this
-        // info and always provide the same completion items.
-        return [
-            {
-                label: 'TypeScript',
-                kind: CompletionItemKind.Text,
-                data: 1
-            },
-            {
-                label: 'JavaScript',
-                kind: CompletionItemKind.Text,
-                data: 2
-            }
-        ];
-    }
-);
+connection.onDocumentSymbol((parm) => {
 
-// This handler resolves additional information for the item selected in
-// the completion list.
-connection.onCompletionResolve(
-    (item: CompletionItem): CompletionItem => {
-        if (item.data === 1) {
-            item.detail = 'TypeScript details';
-            item.documentation = 'TypeScript documentation';
-        } else if (item.data === 2) {
-            item.detail = 'JavaScript details';
-            item.documentation = 'JavaScript documentation';
+    connection.console.log(JSON.stringify(parm, null, 2));
+    const symbols: DocumentSymbol[] = [{
+        name: "Dan Rules",
+        kind: SymbolKind.Constant,
+        range: {
+            start: {line: 1, character: 5},
+            end: {line: 1, character: 8}
+        },
+        selectionRange: {
+            start: {line: 1, character: 5},
+            end: {line: 1, character: 8}
         }
-        return item;
-    }
-);
+    }];
+    return symbols;
+});
 
-/*
-connection.onDidOpenTextDocument((params) => {
-	// A text document got opened in VSCode.
-	// params.uri uniquely identifies the document. For documents store on disk this is a file URI.
-	// params.text the initial full content of the document.
-	connection.console.log(`${params.textDocument.uri} opened.`);
-});
-connection.onDidChangeTextDocument((params) => {
-	// The content of a text document did change in VSCode.
-	// params.uri uniquely identifies the document.
-	// params.contentChanges describe the content changes to the document.
-	connection.console.log(`${params.textDocument.uri} changed: ${JSON.stringify(params.contentChanges)}`);
-});
-connection.onDidCloseTextDocument((params) => {
-	// A text document got closed in VSCode.
-	// params.uri uniquely identifies the document.
-	connection.console.log(`${params.textDocument.uri} closed.`);
-});
-*/
+// connection.onDidOpenTextDocument((params) => {
+//     // A text document got opened in VSCode.
+//     // params.uri uniquely identifies the document. For documents store on disk this is a file URI.
+//     // params.text the initial full content of the document.
+//     connection.console.log(`${params.textDocument.uri} opened.`);
+// });
+
+// connection.onDidChangeTextDocument((params) => {
+//     // The content of a text document did change in VSCode.
+//     // params.uri uniquely identifies the document.
+//     // params.contentChanges describe the content changes to the document.
+//     connection.console.log(`${params.textDocument.uri} changed: ${JSON.stringify(params.contentChanges)}`);
+// });
+
+// connection.onDidCloseTextDocument((params) => {
+//     // A text document got closed in VSCode.
+//     // params.uri uniquely identifies the document.
+//     connection.console.log(`${params.textDocument.uri} closed.`);
+// });
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events

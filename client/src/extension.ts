@@ -16,7 +16,6 @@ import {
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
-    console.log("----TEST")
     // The server is implemented in node
     let serverModule = context.asAbsolutePath(
         path.join('server', 'out', 'server.js')
@@ -33,7 +32,7 @@ export function activate(context: ExtensionContext) {
             module: serverModule,
             transport: TransportKind.ipc,
             options: debugOptions
-        }
+        },
     };
 
     // Options to control the language client
