@@ -8,12 +8,6 @@
 		"hlasm_syntax": {
 				"patterns": [
 					{
-						"include": "#lineTooLong"
-					},
-					{
-						"include": "#lineComment"
-					},
-					{
 						"include": "#continuation"
 					},
 					{
@@ -24,12 +18,50 @@
 					}
 				]
 		},
-		"lineTooLong": {
-			"_description": "Assembler lines should only be 72 chars, at 73 the entire line should be in error",
+		"continuation": {
+			"_description": "Continuation character that appears in column 72",
 			"patterns": [
 				{
-					"name": "invalid.illegal.hlasm",
-					"match": "^.{73,}"  
+					"match": "^(.{71,71})(.)(.{8})(.*)$",
+					"captures": {
+						"1": {
+							"_description": "Allow syntax hilighting of the rest of the line",
+							"patterns": [
+								{"include": "#lineComment"},
+								{"include": "#asmArgumentLine"},
+								{"include": "#asmLineStart"}
+							]
+						},
+						"2": {
+							"patterns": [
+								{
+									"match": "(\\S)",
+									"name": "keyword.other.hlasm"
+								}
+							]
+						},
+						"3": {
+							"patterns": [
+								{
+									"match": "(\\d{8})",
+									"name": "markup.list.numbered.hlasm"
+								},
+								{
+									"match": "(\\S+)",
+									"name": "markup.list.unnumbered.hlasm"
+								}
+							]
+						},
+						"4": {
+							"patterns": [
+								{
+									"match": "(\\S+)",
+									"name": "invalid.illegal.hlasm"
+								}
+							]
+						}
+
+					}
 				}
 			]
 		},
@@ -38,27 +70,7 @@
 			"patterns": [
 				{
 					"name": "comment.line.double-slash.hlasm",
-					"match": "^\\*.*$"
-				}
-			]
-		},
-		"continuation": {
-			"_description": "Continuation character that appears in column 72",
-			"patterns": [
-				{
-					"match": "^(.{71,71})(.)$",
-					"captures": {
-						"1": {
-							"_description": "Allow syntax hilighting of the rest of the line",
-							"patterns": [
-								{"include": "#asmArgumentLine"},
-								{"include": "#asmLineStart"}
-							]
-						},
-						"2": {
-							"name": "keyword.other.hlasm"
-						}
-					}
+					"match": "^(\\*|\\.\\*).*$"
 				}
 			]
 		},
