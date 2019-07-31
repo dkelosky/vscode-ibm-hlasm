@@ -6,7 +6,10 @@ Minimum featured HLASM highlighter for VS Code.
 
 ## Features
 
-![Example Highlighting](./docs/images/example.png)
+Basic highlighting and symbol resolution `Ctrl + Shift + O`:
+
+![Highlighting](./docs/images/symbols.png)
+
 
 ## Contributing
 

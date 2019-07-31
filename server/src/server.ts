@@ -5,19 +5,12 @@
 
 import {
     createConnection,
-    TextDocument,
     TextDocuments,
-    Diagnostic,
-    DiagnosticSeverity,
     ProposedFeatures,
     InitializeParams,
     DidChangeConfigurationNotification,
-    CompletionItem,
-    CompletionItemKind,
-    TextDocumentPositionParams,
-    DocumentSymbol,
-    DocumentSymbolParams,
-    SymbolKind
+    SymbolKind,
+    SymbolInformation
 } from "vscode-languageserver";
 
 // Create a connection for the server. The connection uses Node"s IPC as a transport.
@@ -52,13 +45,6 @@ connection.onInitialize((params: InitializeParams) => {
     return {
         capabilities: {
             textDocumentSync: documents.syncKind,
-            // Tell the client that the server supports code completion
-            // completionProvider: true,
-                // resolveProvider: true
-            // },
-            // hoverProvider: true
-            // hoverProvider: true
-
             documentSymbolProvider: true,
         }
     };
@@ -76,149 +62,51 @@ connection.onInitialized(() => {
     }
 });
 
-// The example settings
-interface ExampleSettings {
-    maxNumberOfProblems: number;
-}
 
-// The global settings, used when the `workspace/configuration` request is not supported by the client.
-// Please note that this is not the case when using this server with the client provided in this example
-// but could happen with other clients.
-const defaultSettings: ExampleSettings = { maxNumberOfProblems: 1000 };
-let globalSettings: ExampleSettings = defaultSettings;
-
-// Cache the settings of all open documents
-let documentSettings: Map<string, Thenable<ExampleSettings>> = new Map();
-
-connection.onDidChangeConfiguration(change => {
-    if (hasConfigurationCapability) {
-        // Reset all cached document settings
-        documentSettings.clear();
-    } else {
-        globalSettings = <ExampleSettings>(
-            (change.settings.languageServerExample || defaultSettings)
-        );
-    }
-
-    // Revalidate all open text documents
-    documents.all().forEach(validateTextDocument);
-});
-
-function getDocumentSettings(resource: string): Thenable<ExampleSettings> {
-    if (!hasConfigurationCapability) {
-        return Promise.resolve(globalSettings);
-    }
-    let result = documentSettings.get(resource);
-    if (!result) {
-        result = connection.workspace.getConfiguration({
-            scopeUri: resource,
-            section: "languageServerExample"
-        });
-        documentSettings.set(resource, result);
-    }
-    return result;
-}
-
-// Only keep settings for open documents
-documents.onDidClose(e => {
-    documentSettings.delete(e.document.uri);
-});
-
-// The content of a text document has changed. This event is emitted
-// when the text document first opened or when its content has changed.
-documents.onDidChangeContent(change => {
-    validateTextDocument(change.document);
-});
-
-async function validateTextDocument(textDocument: TextDocument): Promise<void> {
-    // In this simple example we get the settings for every validate run.
-    let settings = await getDocumentSettings(textDocument.uri);
-
-    // The validator creates diagnostics for all uppercase words length 2 and more
-    let text = textDocument.getText();
-    let pattern = /\b[A-Z]{2,}\b/g;
-    let m: RegExpExecArray | null;
-
-    let problems = 0;
-    let diagnostics: Diagnostic[] = [];
-    while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
-        problems++;
-        let diagnostic: Diagnostic = {
-            severity: DiagnosticSeverity.Warning,
-            range: {
-                start: textDocument.positionAt(m.index),
-                end: textDocument.positionAt(m.index + m[0].length)
-            },
-            message: `${m[0]} is all uppercase.`,
-            source: "ex"
-        };
-        if (hasDiagnosticRelatedInformationCapability) {
-            diagnostic.relatedInformation = [
-                {
-                    location: {
-                        uri: textDocument.uri,
-                        range: Object.assign({}, diagnostic.range)
-                    },
-                    message: "Spelling matters"
-                },
-                {
-                    location: {
-                        uri: textDocument.uri,
-                        range: Object.assign({}, diagnostic.range)
-                    },
-                    message: "Particularly for names"
-                }
-            ];
-        }
-        diagnostics.push(diagnostic);
-    }
-
-    // Send the computed diagnostics to VSCode.
-    connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
-}
-
-connection.onDidChangeWatchedFiles(_change => {
-    // Monitored files have change in VSCode
-    connection.console.log("We received an file change event");
-});
-
+// TODO(Kelosky): in the future, perform diagnostic information (red squiggle) and listen
+// for configuration settings as in the LSP sample
 connection.onDocumentSymbol((parm) => {
 
-    connection.console.log(JSON.stringify(parm, null, 2));
-    const symbols: DocumentSymbol[] = [{
-        name: "Dan Rules",
-        kind: SymbolKind.Constant,
-        range: {
-            start: {line: 1, character: 5},
-            end: {line: 1, character: 8}
-        },
-        selectionRange: {
-            start: {line: 1, character: 5},
-            end: {line: 1, character: 8}
+    const symbols: SymbolInformation[] = [];
+    const document = documents.get(parm.textDocument.uri);
+    if (!document) {
+        return null;
+    }
+
+    const lines = document.getText().split('\n');
+    for (let i = 0; i < lines.length - 1; i++) {
+
+        // if space or * in column one, it's not a symbol
+        if (lines[i][0] !== ' ' && lines[i][0] !== '*') {
+
+            // compress everything to one space
+            const tokenizedLine = lines[i].replace(/\s+/g, " ");
+            const end = tokenizedLine.indexOf(" ");
+            const instruction = tokenizedLine.substring(end + 1, tokenizedLine.indexOf(" ", end + 1))
+            let kind: SymbolKind = SymbolKind.Constant;
+
+            // TODO(Kelosky): DS, DC, perhaps could have other meaning, we can also associate
+            // fields belonging to a DSECT
+            if (instruction === "DSECT") {
+                kind = SymbolKind.Object;
+            }
+
+            let entry: SymbolInformation = {
+                name: lines[i].substring(0, end),
+                kind,
+                location: {
+                    uri: parm.textDocument.uri,
+                    range: {
+                        start: { line: i, character: 0 },
+                        end: { line: i, character: end - 1 }
+                    }
+                }
+            }
+            symbols.push(entry);
         }
-    }];
+    }
     return symbols;
 });
-
-// connection.onDidOpenTextDocument((params) => {
-//     // A text document got opened in VSCode.
-//     // params.uri uniquely identifies the document. For documents store on disk this is a file URI.
-//     // params.text the initial full content of the document.
-//     connection.console.log(`${params.textDocument.uri} opened.`);
-// });
-
-// connection.onDidChangeTextDocument((params) => {
-//     // The content of a text document did change in VSCode.
-//     // params.uri uniquely identifies the document.
-//     // params.contentChanges describe the content changes to the document.
-//     connection.console.log(`${params.textDocument.uri} changed: ${JSON.stringify(params.contentChanges)}`);
-// });
-
-// connection.onDidCloseTextDocument((params) => {
-//     // A text document got closed in VSCode.
-//     // params.uri uniquely identifies the document.
-//     connection.console.log(`${params.textDocument.uri} closed.`);
-// });
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events
