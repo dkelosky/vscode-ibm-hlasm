@@ -24,6 +24,18 @@
 					}
 				]
 		},
+		"additionalAsmHighlight": {
+			"patterns": [{
+				"include": "#asmSpecialStatements"
+			},
+			{
+				"include": "#operators"
+			},
+			{
+				"include": "#numbers"
+			}
+]
+		},
 		"lineTooLong": {
 			"_description": "Assembler lines should only be 72 chars, at 73 the entire line should be in error",
 			"patterns": [
@@ -119,6 +131,33 @@
 		"asmArguments": {
 			"patterns": [
 				{
+					"_description": "Handle a length instruction",
+					"match": "(\\S*?)(L')(.*)",
+					"captures": {
+						"1": {
+							"_description": "This group refers to an instruction operator",
+							"name": "keyword.control.hlasm",
+							"patterns": [
+								{
+										"include": "#additionalAsmHighlight"
+									}
+							]
+						},
+						"2": {
+							"_description": "Highlight the L' operator as a type",
+							"name": "support.type.hlasm"
+						},
+						"3": {
+							"_description": "Recursively call this rule to get all patterns.",
+							"patterns": [
+								{
+									"include": "#asmArguments"
+								}
+							]
+						}
+					}
+				},
+				{
 					"_description": "Handle strings in an instruction",
 					"match": "(\\S*)('.*')(.*)",
 					"captures": {
@@ -127,13 +166,7 @@
 							"name": "keyword.control.hlasm",
 							"patterns": [
 								{
-									"include": "#asmSpecialStatements"
-								},
-								{
-									"include": "#operators"
-								},
-								{
-									"include": "#numbers"
+									"include": "#additionalAsmHighlight"
 								}
 							]
 						},
@@ -158,13 +191,7 @@
 							"name": "keyword.control.hlasm",
 							"patterns": [
 								{
-									"include": "#asmSpecialStatements"
-								},
-								{
-									"include": "#operators"
-								},
-								{
-									"include": "#numbers"
+									"include": "#additionalAsmHighlight"
 								}
 							]
 						},
