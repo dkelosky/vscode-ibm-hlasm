@@ -82,27 +82,36 @@ connection.onDocumentSymbol((parm) => {
             // compress everything to one space
             const tokenizedLine = lines[i].replace(/\s+/g, " ");
             const end = tokenizedLine.indexOf(" ");
-            const instruction = tokenizedLine.substring(end + 1, tokenizedLine.indexOf(" ", end + 1))
-            let kind: SymbolKind = SymbolKind.Constant;
+            if (end > 0) {
 
-            // TODO(Kelosky): DS, DC, perhaps could have other meaning, we can also associate
-            // fields belonging to a DSECT
-            if (instruction === "DSECT") {
-                kind = SymbolKind.Object;
-            }
+                let kind: SymbolKind = SymbolKind.Constant;
 
-            let entry: SymbolInformation = {
-                name: lines[i].substring(0, end),
-                kind,
-                location: {
-                    uri: parm.textDocument.uri,
-                    range: {
-                        start: { line: i, character: 0 },
-                        end: { line: i, character: end - 1 }
+                const instructionEnd = tokenizedLine.indexOf(" ", end + 1);
+
+                if (instructionEnd > 0) {
+                    const instruction = tokenizedLine.substring(end + 1, tokenizedLine.indexOf(" ", end + 1))
+                    // TODO(Kelosky): DS, DC, perhaps could have other meaning, we can also associate
+                    // fields belonging to a DSECT
+                    if (instruction === "DSECT") {
+                        kind = SymbolKind.Object;
                     }
                 }
+
+                const entry: SymbolInformation = {
+                    name: lines[i].substring(0, end),
+                    kind,
+                    location: {
+                        uri: parm.textDocument.uri,
+                        range: {
+                            start: { line: i, character: 0 },
+                            end: { line: i, character: end - 1 }
+                        }
+                    }
+                };
+
+                symbols.push(entry);
             }
-            symbols.push(entry);
+
         }
     }
     return symbols;
