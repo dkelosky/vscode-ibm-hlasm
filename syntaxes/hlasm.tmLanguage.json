@@ -11,7 +11,7 @@
 						"include": "#lineTooLong"
 					},
 					{
-						"include": "#continuation"
+						"include": "#parseAllLines"
 					},
 					{
 						"include": "#asmArgumentLine"
@@ -30,11 +30,11 @@
 				}
 			]
 		},
-		"continuation": {
-			"_description": "Continuation character that appears in column 72",
+		"parseAllLines": {
+			"_description": "Separate out code from continuation, sequence field, and the rest",
 			"patterns": [
 				{
-					"match": "^(.{71,71})(.)(.{8})(.*)$",
+					"match": "^(.{0,71})(.)(.{0,8})(.*)$",
 					"captures": {
 						"1": {
 							"_description": "Allow syntax hilighting of the rest of the line",
