@@ -2,34 +2,49 @@
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "IBM HLASM",
 	"patterns": [
-		{"include": "#hlasm_syntax"}
+		{
+			"include": "#hlasm_syntax"
+		}
 	],
 	"repository": {
 		"hlasm_syntax": {
-				"patterns": [
-					{
-						"include": "#lineTooLong"
-					},
-					{
-						"include": "#lineComment"
-					},
-					{
-						"include": "#continuation"
-					},
-					{
-						"include": "#asmArgumentLine"
-					},
-					{
-						"include": "#asmLineStart"
-					}
-				]
+			"patterns": [
+				{
+					"include": "#lineTooLong"
+				},
+				{
+					"include": "#lineComment"
+				},
+				{
+					"include": "#continuation"
+				},
+				{
+					"include": "#asmArgumentLine"
+				},
+				{
+					"include": "#asmLineStart"
+				}
+			]
+		},
+		"additionalAsmHighlight": {
+			"patterns": [
+				{
+					"include": "#asmSpecialStatements"
+				},
+				{
+					"include": "#operators"
+				},
+				{
+					"include": "#numbers"
+				}
+			]
 		},
 		"lineTooLong": {
 			"_description": "Assembler lines should only be 72 chars, at 73 the entire line should be in error",
 			"patterns": [
 				{
 					"name": "invalid.illegal.hlasm",
-					"match": "^.{73,}"  
+					"match": "^.{73,}"
 				}
 			]
 		},
@@ -51,8 +66,12 @@
 						"1": {
 							"_description": "Allow syntax hilighting of the rest of the line",
 							"patterns": [
-								{"include": "#asmArgumentLine"},
-								{"include": "#asmLineStart"}
+								{
+									"include": "#asmArgumentLine"
+								},
+								{
+									"include": "#asmLineStart"
+								}
 							]
 						},
 						"2": {
@@ -75,7 +94,9 @@
 						"2": {
 							"_description": "The assembler instructions for this statement",
 							"patterns": [
-								{"include": "#asmInstruction"}
+								{
+									"include": "#asmInstruction"
+								}
 							]
 						}
 					}
@@ -93,7 +114,9 @@
 						},
 						"2": {
 							"patterns": [
-								{"include": "#asmArguments"}
+								{
+									"include": "#asmArguments"
+								}
 							]
 						}
 					}
@@ -109,7 +132,9 @@
 					"captures": {
 						"1": {
 							"patterns": [
-								{"include": "#asmArguments"}
+								{
+									"include": "#asmArguments"
+								}
 							]
 						}
 					}
@@ -119,6 +144,33 @@
 		"asmArguments": {
 			"patterns": [
 				{
+					"_description": "Handle a length instruction",
+					"match": "(\\S*?)(L')(.*)",
+					"captures": {
+						"1": {
+							"_description": "This group refers to an instruction operator",
+							"name": "keyword.control.hlasm",
+							"patterns": [
+								{
+									"include": "#additionalAsmHighlight"
+								}
+							]
+						},
+						"2": {
+							"_description": "Highlight the L' operator as a type",
+							"name": "support.type.hlasm"
+						},
+						"3": {
+							"_description": "Recursively call this rule to get all patterns.",
+							"patterns": [
+								{
+									"include": "#asmArguments"
+								}
+							]
+						}
+					}
+				},
+				{
 					"_description": "Handle strings in an instruction",
 					"match": "(\\S*)('.*')(.*)",
 					"captures": {
@@ -127,13 +179,7 @@
 							"name": "keyword.control.hlasm",
 							"patterns": [
 								{
-									"include": "#asmSpecialStatements"
-								},
-								{
-									"include": "#operators"
-								},
-								{
-									"include": "#numbers"
+									"include": "#additionalAsmHighlight"
 								}
 							]
 						},
@@ -144,7 +190,9 @@
 						"3": {
 							"_description": "Recursively call this rule to get all patterns.",
 							"patterns": [
-								{"include": "#asmArguments"}
+								{
+									"include": "#asmArguments"
+								}
 							]
 						}
 					}
@@ -158,13 +206,7 @@
 							"name": "keyword.control.hlasm",
 							"patterns": [
 								{
-									"include": "#asmSpecialStatements"
-								},
-								{
-									"include": "#operators"
-								},
-								{
-									"include": "#numbers"
+									"include": "#additionalAsmHighlight"
 								}
 							]
 						},
