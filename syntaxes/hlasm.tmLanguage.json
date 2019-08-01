@@ -47,7 +47,7 @@
 			"patterns": [
 				{
 					"name": "invalid.illegal.hlasm",
-					"match": "^.{73,}"
+					"match": "^.{81,}"
 				}
 			]
 		},
@@ -64,7 +64,7 @@
 			"_description": "Continuation character that appears in column 72",
 			"patterns": [
 				{
-					"match": "^(.{71,71})(.)$",
+					"match": "^(.{71,71})(.)(.{0,8})$",
 					"captures": {
 						"1": {
 							"_description": "Allow syntax highlighting of the rest of the line",
@@ -79,6 +79,10 @@
 						},
 						"2": {
 							"name": "keyword.other.hlasm"
+						},
+						"3": {
+							"_description": "SEQUENCE NUMBERS!!!!!",
+							"name": "constant.numeric.hlasm"
 						}
 					}
 				}
