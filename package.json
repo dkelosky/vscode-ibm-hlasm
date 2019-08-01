@@ -85,7 +85,10 @@
         "postinstall": "cd client && npm install && cd ../server && npm install && cd .."
     },
     "devDependencies": {
+        "@types/jest": "^24.0.16",
         "@types/node": "^8.0.0",
+        "jest": "^24.8.0",
+        "ts-jest": "^24.0.2",
         "tslint": "^5.16.0",
         "typescript": "^3.5.1"
     }
