@@ -16,7 +16,7 @@
 					"include": "#lineComment"
 				},
 				{
-					"include": "#continuation"
+					"include": "#parseLine"
 				},
 				{
 					"include": "#asmArgumentLine"
@@ -28,6 +28,9 @@
 		},
 		"additionalAsmHighlight": {
 			"patterns": [
+				{
+					"include": "#labels"
+				},
 				{
 					"include": "#asmSpecialStatements"
 				},
@@ -44,7 +47,7 @@
 			"patterns": [
 				{
 					"name": "invalid.illegal.hlasm",
-					"match": "^.{73,}"
+					"match": "^.{81,}"
 				}
 			]
 		},
@@ -53,18 +56,60 @@
 			"patterns": [
 				{
 					"name": "comment.line.double-slash.hlasm",
-					"match": "^\\*.*$"
+					"match": "^(\\*.{70,70})(.*)",
+					"captures": {
+						"1": {
+							"name": "comment.line.double-slash.hlasm"
+						},
+						"2": {
+							"patterns": [
+								{
+									"match": "\\s(.{0,8})",
+									"captures": {
+										"1": {
+											"_description": "SEQUENCE NUMBERS!!!!!",
+											"patterns": [
+												{
+													"include": "#sequenceNumbers"
+												}
+											]
+										}
+									}
+								},
+								{
+									"match": "([^\\s])(.{0,8})",
+									"captures": {
+										"1": {
+											"name": "invalid.illegal.hlasm"
+										},
+										"2": {
+											"_description": "SEQUENCE NUMBERS!!!!!",
+											"patterns": [
+												{
+													"include": "#sequenceNumbers"
+												}
+											]
+										}
+									}
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "comment.line.double-slash.hlasm",
+					"match": "\\*.*"
 				}
 			]
 		},
-		"continuation": {
-			"_description": "Continuation character that appears in column 72",
+		"parseLine": {
 			"patterns": [
 				{
-					"match": "^(.{71,71})(.)$",
+					"_description": "Continuation character that appears in column 72",
+					"match": "^(.{71,71})([^\\s])(.{0,8})",
 					"captures": {
 						"1": {
-							"_description": "Allow syntax hilighting of the rest of the line",
+							"_description": "Allow syntax highlighting of the rest of the line",
 							"patterns": [
 								{
 									"include": "#asmArgumentLine"
@@ -76,6 +121,48 @@
 						},
 						"2": {
 							"name": "keyword.other.hlasm"
+						},
+						"3": {
+							"_description": "SEQUENCE NUMBERS!!!!!",
+							"patterns": [
+								{
+									"include": "#sequenceNumbers"
+								}
+							]
+						},
+						"5": {
+							"_description": "This next capture group is the entire next line",
+							"patterns": [
+								{
+									"match": "\\S.*",
+									"name": "invalid.illegal"
+								}
+							]
+						}
+					}
+				},
+				{
+					"_description": "Sequence numbers for non-continuation lines",
+					"match": "^(.{71,71})(\\s?)(.{0,8})$",
+					"captures": {
+						"1": {
+							"_description": "Allow syntax highlighting of the rest of the line",
+							"patterns": [
+								{
+									"include": "#asmArgumentLine"
+								},
+								{
+									"include": "#asmLineStart"
+								}
+							]
+						},
+						"3": {
+							"_description": "SEQUENCE NUMBERS!!!!!",
+							"patterns": [
+								{
+									"include": "#sequenceNumbers"
+								}
+							]
 						}
 					}
 				}
@@ -223,20 +310,29 @@
 				}
 			]
 		},
+		"labels": {
+			"_description": "marks special labels in the code",
+			"match": "[*]",
+			"name": "support.function.hlasm"
+		},
 		"operators": {
 			"_description": "marks operators properly",
-			"match": "[=(),*]",
+			"match": "[=(),+]",
 			"name": "keyword.operator.hlasm"
 		},
 		"numbers": {
 			"_description": "marks numbers properly",
-			"match": "(?<=[=(),*\\s])-?\\d*(?=[=(),*\\s]|$)",
+			"match": "(?<=[=(),*\\s+])-?\\d*(?=[=(),*+\\s]|$)",
 			"name": "constant.numeric.hlasm"
 		},
 		"asmSpecialStatements": {
 			"_description": "allows for special assembler statements",
-			"match": "(?<=[=(),*\\s])=?\\d*(A|B|C|D|E|F|G|H|V|X|Z)(L\\d*)?(?=[=(),*\\s]|$)",
+			"match": "(?<=[=(),*+\\s])=?\\d*(A|B|C|D|E|F|G|H|V|X|Z)(L\\d*)?(?=[=(),*\\s+]|$)",
 			"name": "support.type.hlasm"
+		},
+		"sequenceNumbers": {
+			"name": "constant.numeric.hlasm",
+			"match": ".*"
 		}
 	},
 	"scopeName": "source.hlasm"
