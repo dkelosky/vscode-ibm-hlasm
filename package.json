@@ -1,9 +1,10 @@
 {
     "name": "ibm-assembler",
+    "license": "MIT",
     "displayName": "ibm-assembler",
     "description": "IBM Assembler Language Highlighter",
     "repository": "https://github.com/dkelosky/vscode-ibm-hlasm",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "keywords": [
         "z/OS",
         "s390",
@@ -23,7 +24,31 @@
     "categories": [
         "Programming Languages"
     ],
+    "main": "./client/out/extension",
     "contributes": {
+        "configuration": {
+            "type": "object",
+            "title": "HLASM configuration",
+            "properties": {
+                "hlasmServer.maxNumberOfProblems": {
+                    "scope": "resource",
+                    "type": "number",
+                    "default": 100,
+                    "description": "Controls the maximum number of problems produced by the server."
+                },
+                "hlasmServer.trace.server": {
+                    "scope": "window",
+                    "type": "string",
+                    "enum": [
+                        "off",
+                        "messages",
+                        "verbose"
+                    ],
+                    "default": "off",
+                    "description": "Traces the communication between VS Code and the language server."
+                }
+            }
+        },
         "languages": [
             {
                 "id": "hlasm",
@@ -49,5 +74,19 @@
                 "path": "./syntaxes/hlasm.tmLanguage.json"
             }
         ]
+    },
+    "activationEvents": [
+        "onLanguage:hlasm"
+    ],
+    "scripts": {
+        "vscode:prepublish": "cd client && npm run update-vscode && cd .. && npm run compile",
+        "compile": "tsc -b",
+        "watch": "tsc -b -w",
+        "postinstall": "cd client && npm install && cd ../server && npm install && cd .."
+    },
+    "devDependencies": {
+        "@types/node": "^8.0.0",
+        "tslint": "^5.16.0",
+        "typescript": "^3.5.1"
     }
 }
