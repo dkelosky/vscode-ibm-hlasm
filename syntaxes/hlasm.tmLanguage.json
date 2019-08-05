@@ -297,7 +297,7 @@
 			"patterns": [
 				{
 					"_description": "Handle a length instruction",
-					"match": "(\\S*?)(L')(.*)",
+					"match": "(\\S*?)([LKNT]')(.*)",
 					"captures": {
 						"1": {
 							"_description": "This group refers to an instruction operator",
