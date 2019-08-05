@@ -259,7 +259,7 @@
 				},
 				{
 					"_description": "Handle strings in an instruction",
-					"match": "(\\S*)('.*')(.*)",
+					"match": "(\\S*?)('.*?')(.*)",
 					"captures": {
 						"1": {
 							"_description": "This group refers to an instruction operator",
