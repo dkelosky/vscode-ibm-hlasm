@@ -231,8 +231,14 @@
 		"asmArguments": {
 			"patterns": [
 				{
-					"_description": "Handle a length instruction",
-					"match": "(\\S*?)(L')(.*)",
+					"include": "#stringType"
+				},
+				{
+					"include": "#quoteType"
+				},
+				{
+					"_description": "Handle no strings in instruction",
+					"match": "(\\S*)(.*)",
 					"captures": {
 						"1": {
 							"_description": "This group refers to an instruction operator",
@@ -244,19 +250,20 @@
 							]
 						},
 						"2": {
-							"_description": "Highlight the L' operator as a type",
-							"name": "support.type.hlasm"
-						},
-						"3": {
-							"_description": "Recursively call this rule to get all patterns.",
-							"patterns": [
-								{
-									"include": "#asmArguments"
-								}
-							]
+							"_description": "The rest of the line is a comment.",
+							"name": "comment.line.double-slash.hlasm"
 						}
 					}
 				},
+				{
+					"_description": "If the current pattern starts with a space, then we should comment the rest of the string",
+					"match": "\\s.*",
+					"name": "comment.line.double-slash.hlasm"
+				}
+			]
+		},
+		"stringType": {
+			"patterns": [
 				{
 					"_description": "Handle strings in an instruction",
 					"match": "(\\S*?)('.*?')(.*)",
@@ -283,10 +290,14 @@
 							]
 						}
 					}
-				},
+				}
+			]
+		},
+		"quoteType": {
+			"patterns": [
 				{
-					"_description": "Handle no strings in instruction",
-					"match": "(\\S*)(.*)",
+					"_description": "Handle a length instruction",
+					"match": "(\\S*?)(L')(.*)",
 					"captures": {
 						"1": {
 							"_description": "This group refers to an instruction operator",
@@ -298,15 +309,18 @@
 							]
 						},
 						"2": {
-							"_description": "The rest of the line is a comment.",
-							"name": "comment.line.double-slash.hlasm"
+							"_description": "Highlight the L' operator as a type",
+							"name": "support.type.hlasm"
+						},
+						"3": {
+							"_description": "Recursively call this rule to get all patterns.",
+							"patterns": [
+								{
+									"include": "#asmArguments"
+								}
+							]
 						}
 					}
-				},
-				{
-					"_description": "If the current pattern starts with a space, then we should comment the rest of the string",
-					"match": "\\s.*",
-					"name": "comment.line.double-slash.hlasm"
 				}
 			]
 		},
