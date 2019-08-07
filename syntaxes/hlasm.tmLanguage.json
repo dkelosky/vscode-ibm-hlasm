@@ -231,58 +231,10 @@
 		"asmArguments": {
 			"patterns": [
 				{
-					"_description": "Handle a length instruction",
-					"match": "(\\S*?)(L')(.*)",
-					"captures": {
-						"1": {
-							"_description": "This group refers to an instruction operator",
-							"name": "keyword.control.hlasm",
-							"patterns": [
-								{
-									"include": "#additionalAsmHighlight"
-								}
-							]
-						},
-						"2": {
-							"_description": "Highlight the L' operator as a type",
-							"name": "support.type.hlasm"
-						},
-						"3": {
-							"_description": "Recursively call this rule to get all patterns.",
-							"patterns": [
-								{
-									"include": "#asmArguments"
-								}
-							]
-						}
-					}
+					"include": "#stringType"
 				},
 				{
-					"_description": "Handle strings in an instruction",
-					"match": "(\\S*)('.*')(.*)",
-					"captures": {
-						"1": {
-							"_description": "This group refers to an instruction operator",
-							"name": "keyword.control.hlasm",
-							"patterns": [
-								{
-									"include": "#additionalAsmHighlight"
-								}
-							]
-						},
-						"2": {
-							"_description": "A string was found, so we can't be sure this is the end of the line",
-							"name": "string.quoted.single.hlasm"
-						},
-						"3": {
-							"_description": "Recursively call this rule to get all patterns.",
-							"patterns": [
-								{
-									"include": "#asmArguments"
-								}
-							]
-						}
-					}
+					"include": "#quoteType"
 				},
 				{
 					"_description": "Handle no strings in instruction",
@@ -310,6 +262,68 @@
 				}
 			]
 		},
+		"stringType": {
+			"patterns": [
+				{
+					"_description": "Handle strings in an instruction",
+					"match": "(\\S*?)('.*?')(.*)",
+					"captures": {
+						"1": {
+							"_description": "This group refers to an instruction operator",
+							"name": "keyword.control.hlasm",
+							"patterns": [
+								{
+									"include": "#additionalAsmHighlight"
+								}
+							]
+						},
+						"2": {
+							"_description": "A string was found, so we can't be sure this is the end of the line",
+							"name": "string.quoted.single.hlasm"
+						},
+						"3": {
+							"_description": "Recursively call this rule to get all patterns.",
+							"patterns": [
+								{
+									"include": "#asmArguments"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		"quoteType": {
+			"patterns": [
+				{
+					"_description": "Handle a length instruction",
+					"match": "(\\S*?)([LKNT]')(.*)",
+					"captures": {
+						"1": {
+							"_description": "This group refers to an instruction operator",
+							"name": "keyword.control.hlasm",
+							"patterns": [
+								{
+									"include": "#additionalAsmHighlight"
+								}
+							]
+						},
+						"2": {
+							"_description": "Highlight the L' operator as a type",
+							"name": "support.type.hlasm"
+						},
+						"3": {
+							"_description": "Recursively call this rule to get all patterns.",
+							"patterns": [
+								{
+									"include": "#asmArguments"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
 		"labels": {
 			"_description": "marks special labels in the code",
 			"match": "[*]",
@@ -327,7 +341,7 @@
 		},
 		"asmSpecialStatements": {
 			"_description": "allows for special assembler statements",
-			"match": "(?<=[=(),*+\\s])=?\\d*(A|B|C|D|E|F|G|H|V|X|Z)(L\\d*)?(?=[=(),*\\s+]|$)",
+			"match": "(?<=[=(),*+\\s])=?\\d*(A|B|C|D|E|F|G|H|P|V|X|Z)(L\\d*)?(?=[=(),*\\s+]|$)",
 			"name": "support.type.hlasm"
 		},
 		"sequenceNumbers": {
