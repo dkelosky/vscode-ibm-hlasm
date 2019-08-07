@@ -10,7 +10,6 @@ Basic highlighting and symbol resolution `Ctrl + Shift + O`:
 
 ![Highlighting](./docs/images/symbols.png)
 
-
 ## Contributing
 
 Pull requests welcome!

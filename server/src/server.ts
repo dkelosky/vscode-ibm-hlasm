@@ -129,7 +129,11 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 
     let problems = 0;
     const diagnostics: Diagnostic[] = [];
-    // TODO(Kelosky): while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
+
+    // TODO(Kelosky): account for max number of problems
+    //   while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
+    // TODO(Kelosky): print diagnostics for blank lines
+
     const lines = text.split("\n");
     for (let i = 0; i < lines.length - 1; i++) {
         if (lines[i].length - 1 > MAX_LEN) {
@@ -199,8 +203,6 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
 
-// TODO(Kelosky): in the future, perform diagnostic information (red squiggle) and listen
-// for configuration settings as in the LSP sample
 connection.onDocumentSymbol((parm) => {
 
     const symbols: SymbolInformation[] = [];
@@ -215,10 +217,13 @@ connection.onDocumentSymbol((parm) => {
         // if space or * in column one, it's not a symbol
         if (lines[i][0] !== " " && lines[i][0] !== "*") {
 
-            const tokenizedLine = lines[i].replace(/\s+/g, " ").split(" ");
+            // compress multiple spaces to a single space
+            let  tokenizedLine = lines[i].replace(/\s+/g, " ").split(" ");
+
+            // remove blank entries
+            tokenizedLine = tokenizedLine.filter((entry) => entry !== "");
 
             if (tokenizedLine.length > 0) {
-
 
                 let kind: SymbolKind = SymbolKind.Constant;
 
