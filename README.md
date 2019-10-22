@@ -1,3 +1,5 @@
+[![downloads](https://img.shields.io/visual-studio-marketplace/d/kelosky.ibm-assembler)](https://marketplace.visualstudio.com/items?itemName=kelosky.ibm-assembler)
+
 # HLASM Highlighting Extension for VS Code
 
 Minimum featured HLASM highlighter for VS Code.
