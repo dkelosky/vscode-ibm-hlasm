@@ -6,7 +6,9 @@ Minimum featured HLASM highlighter for VS Code.
 
 ## Features
 
-Basic highlighting and symbol resolution `Ctrl + Shift + O`:
+Go to definition via `Ctrl + click` or `F12`.
+
+Highlighting and symbol resolution via `Ctrl + Shift + O`:
 
 ![Highlighting](./docs/images/symbols.png)
 
