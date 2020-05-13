@@ -17,4 +17,5 @@ Highlighting and symbol resolution via `Ctrl + Shift + O`:
 
 ## Contributing
 
-Pull requests welcome!
+`npm run build:syntax` to convert `.yaml` to required `.json`.
+
