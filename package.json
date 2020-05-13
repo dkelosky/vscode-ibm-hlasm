@@ -73,7 +73,17 @@
                 "scopeName": "source.hlasm",
                 "path": "./syntaxes/hlasm.tmLanguage.json"
             }
-        ]
+        ],
+        "configurationDefaults": {
+            "[hlasm]": {
+                "editor.autoIndent": "none",
+                "editor.rulers": [
+                    71,
+                    72,
+                    80
+                ]
+            }
+        }
     },
     "activationEvents": [
         "onLanguage:hlasm"
