@@ -7,6 +7,12 @@ Minimum featured HLASM highlighter and LSP extension for VS Code.
 
 > Tip: Add editor configuration in `user.settings` to highlight continuation column, e.g. `[hlasm] : { "editor.rulers" : [71, 72, 80]},`
 
+## Acknowledgements
+
+Special thanks to [CoderCoco](https://github.com/CoderCoco) for creating the base version of this extension!
+
+Thanks [mhammack](https://github.com/mhammack) for updates
+
 ## Features
 
 Go to definition via `Ctrl + click` or `F12`.
