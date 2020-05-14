@@ -11,7 +11,7 @@ Minimum featured HLASM highlighter and LSP extension for VS Code.
 
 Special thanks to [CoderCoco](https://github.com/CoderCoco) for creating the base version of this extension!
 
-Thanks [mhammack](https://github.com/mhammack) for updates
+Thanks to [mhammack](https://github.com/mhammack) for extra updates!
 
 ## Features
 
