@@ -119,7 +119,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     let problems = 0;
     const diagnostics: Diagnostic[] = [];
 
-    const lines = text.split("\n");
+    const lines = text.split(/\r?\n/);
     for (let i = 0; i < lines.length; i++) {
         if (lines[i].length > MAX_LEN) {
             problems++;
@@ -149,7 +149,7 @@ connection.onDefinition((parm) => {
         return null;
     }
 
-    const lines = document.getText().split("\n");
+    const lines = document.getText().split(/\r?\n/);
 
     connection.console.info(`Definition ${parm.position.character} on line '${lines[parm.position.line]}'`);
     connection.console.info(`There are ${symbolsCache.size} entries in cached symbols`);
@@ -255,7 +255,7 @@ connection.onDocumentSymbol((parm) => {
     connection.console.info(`Clearing symbol cache...`);
     symbolsCache.clear();
 
-    const lines = document.getText().split("\n");
+    const lines = document.getText().split(/\r?\n/);
     for (let i = 0; i < lines.length; i++) {
 
         // if space or * in column one, it's not a symbol
