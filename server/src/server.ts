@@ -119,16 +119,16 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     let problems = 0;
     const diagnostics: Diagnostic[] = [];
 
-    const lines = text.split("\n");
-    for (let i = 0; i < lines.length - 1; i++) {
-        if (lines[i].length - 1 > MAX_LEN) {
+    const lines = text.split(/\r?\n/);
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i].length > MAX_LEN) {
             problems++;
 
             const diagnostic: Diagnostic = {
                 severity: DiagnosticSeverity.Error,
                 range: {
                     start: { line: i, character: MAX_LEN },
-                    end: { line: i, character: lines[i].length - 1 },
+                    end: { line: i, character: lines[i].length },
                 },
                 message: `Exceeded ${MAX_LEN} characters`,
                 source: "hlasm"
@@ -149,7 +149,7 @@ connection.onDefinition((parm) => {
         return null;
     }
 
-    const lines = document.getText().split("\n");
+    const lines = document.getText().split(/\r?\n/);
 
     connection.console.info(`Definition ${parm.position.character} on line '${lines[parm.position.line]}'`);
     connection.console.info(`There are ${symbolsCache.size} entries in cached symbols`);
@@ -255,8 +255,8 @@ connection.onDocumentSymbol((parm) => {
     connection.console.info(`Clearing symbol cache...`);
     symbolsCache.clear();
 
-    const lines = document.getText().split("\n");
-    for (let i = 0; i < lines.length - 1; i++) {
+    const lines = document.getText().split(/\r?\n/);
+    for (let i = 0; i < lines.length; i++) {
 
         // if space or * in column one, it's not a symbol
         if (lines[i][0] !== " " && lines[i][0] !== "*") {
@@ -286,7 +286,7 @@ connection.onDocumentSymbol((parm) => {
                         uri: parm.textDocument.uri,
                         range: {
                             start: { line: i, character: 0 },
-                            end: { line: i, character: tokenizedLine[0].length - 1 }
+                            end: { line: i, character: tokenizedLine[0].length }
                         }
                     }
                 };

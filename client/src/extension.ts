@@ -37,8 +37,8 @@ export function activate(context: ExtensionContext) {
 
     // Options to control the language client
     let clientOptions: LanguageClientOptions = {
-        // Register the server for plain text documents
-        documentSelector: [{ scheme: 'file', language: 'hlasm' }],
+        // Register the server for IBM assembler documents
+        documentSelector: [{ language: 'hlasm' }],
         // documentSelector: [{ scheme: 'file', language: 'hlasm' }],
         synchronize: {
             // Notify the server about file changes to '.clientrc files contained in the workspace
